@@ -31,7 +31,7 @@ function processFirstItem(stringList, callback) {
  *
  * 2. Which of the two uses a closure? How can you tell?
  *
- * counter2 because it is referencing the count variable outside of its context.
+ * counter2 because it is referencing the count variable outside of its context. (The ability to access functions from a parent level scope in child level scope, even after the parent function has been terminated. Code that has been identified else where that we can use later. We can pass down but can't pass back up.) Inner variable references variables in outer scope is called a closure.
  *
  * 3. In what scenario would the counter1 code be preferable? In what scenario would counter2 be better?
  *
@@ -59,8 +59,8 @@ function counter2() {
 Write a function called `inning` that returns a random number of points that a team scored in an inning. This should be a whole number between 0 and 2. */
 
 function inning() {
-  let score = Math.round(Math.random() * 2);
-  return score;
+  let points = Math.round(Math.random() * 2);
+  return points;
 }
 
 /* Task 3: finalScore()
@@ -77,8 +77,14 @@ finalScore(inning, 9) might return:
 
 */
 
-function finalScore(/*code Here*/) {
-  /*Code Here*/
+function finalScore(inning, numOfInnings) {
+  let homeScore = 0;
+  let awayScore = 0;
+  for (let i = 1; i < numOfInnings; i++) {
+    homeScore += inning();
+    awayScore += inning();
+  }
+  return { Home: homeScore, Away: awayScore };
 }
 
 /* Task 4: 
@@ -101,6 +107,34 @@ and returns the score at each pont in the game, like so:
 9th inning: awayTeam - homeTeam
 Final Score: awayTeam - homeTeam */
 
-function scoreboard(/* CODE HERE */) {
-  /* CODE HERE */
+function scoreboard(getInningScore, inning, numOfInnings) {
+  let homeScore = 0;
+  let awayScore = 0;
+  let currentScore = [];
+  for (let i = 1; i <= numOfInnings; i++) {
+    homeScore += inning();
+    awayScore += inning();
+    currentScore.push(getInningScore(i.toString(), awayScore, homeScore));
+  }
+  return currentScore;
 }
+
+function getInningScore(currentInning, awayScore, homeScore) {
+  return `${currentInning} inning: ${awayScore} - ${homeScore}`;
+}
+
+// function game(sport) {
+//   let score = 0;
+//   return function win() {
+//     score++;
+//     return score;
+//   };
+// }
+
+// const hockeyGame = game("hockey");
+// console.log(hockeyGame());
+// // console.log(hockeyGame());
+// // console.log(hockeyGame());
+
+// // const footGame = game("football");
+// // console.log(footGame());
