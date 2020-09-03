@@ -27,14 +27,15 @@ function processFirstItem(stringList, callback) {
  *
  * 1. What is the difference between counter1 and counter2?
  *
- * In counter1, count is function scope. In counter2,  count is global scope. In counter1, count is only available within the function. In counter 2, the count variable won't reset each time the function is run.
+ * In counter1, count is function scope. In counter2,  count is global scope. In counter1, count is only available within the function.
  *
  * 2. Which of the two uses a closure? How can you tell?
  *
- * counter2 because it is referencing the count variable outside of its context. (The ability to access functions from a parent level scope in child level scope, even after the parent function has been terminated. Code that has been identified else where that we can use later. We can pass down but can't pass back up.) Inner variable references variables in outer scope is called a closure.
+ * counter1 because the inner counter function marks the closure and references count variable outside the scope of the inner function.
  *
  * 3. In what scenario would the counter1 code be preferable? In what scenario would counter2 be better?
  *
+ * counter1 code would be better if you may need to assign the counter to multiple variables. With counter2, count is outside the scope of the function, so each time the function is run the count will increase. Therfore, it would be preferred only if you did not expect to assign the function to another variable and only needed to count once.
  */
 
 // counter1 code
@@ -107,6 +108,8 @@ and returns the score at each pont in the game, like so:
 9th inning: awayTeam - homeTeam
 Final Score: awayTeam - homeTeam */
 
+//This was the first way I did it.
+
 function scoreboard(getInningScore, inning, numOfInnings) {
   let homeScore = 0;
   let awayScore = 0;
@@ -114,27 +117,40 @@ function scoreboard(getInningScore, inning, numOfInnings) {
   for (let i = 1; i <= numOfInnings; i++) {
     homeScore += inning();
     awayScore += inning();
-    currentScore.push(getInningScore(i.toString(), awayScore, homeScore));
+    currentScore.push(getInningScore(i, awayScore, homeScore, numOfInnings));
   }
   return currentScore;
 }
 
-function getInningScore(currentInning, awayScore, homeScore) {
-  return `${currentInning} inning: ${awayScore} - ${homeScore}`;
-}
-
-// function game(sport) {
-//   let score = 0;
-//   return function win() {
-//     score++;
-//     return score;
+// function scoreboard(inning, numOfInnings) {
+//   let homeScore = 0;
+//   let awayScore = 0;
+//   let currentInning = 0;
+//   return function getScore() {
+//     homeScore += inning();
+//     awayScore += inning();
+//     currentInning++;
+//     return getInningScore(currentInning, awayScore, homeScore, numOfInnings);
 //   };
 // }
 
-// const hockeyGame = game("hockey");
-// console.log(hockeyGame());
-// // console.log(hockeyGame());
-// // console.log(hockeyGame());
+function getInningScore(currentInning, awayScore, homeScore, numOfInnings) {
+  let endingNum = currentInning % 10;
+  let inningWithSuffix;
+  if (currentInning === numOfInnings) {
+    inningWithSuffix = "Final Score";
+  } else if (currentInning > numOfInnings) {
+    return (inningWithSuffix = "The Game's Over!");
+  } else if (endingNum == 1 && currentInning != 11) {
+    inningWithSuffix = currentInning.toString() + "st" + " inning";
+  } else if (endingNum == 2 && currentInning != 12) {
+    inningWithSuffix = currentInning.toString() + "nd" + " inning";
+  } else if (endingNum == 3 && currentInning != 13) {
+    inningWithSuffix = currentInning.toString() + "rd" + " inning";
+  } else {
+    inningWithSuffix = currentInning.toString() + "th" + " inning";
+  }
+  return `${inningWithSuffix}: ${awayScore} - ${homeScore}`;
+}
 
-// // const footGame = game("football");
-// // console.log(footGame());
+const game1 = scoreboard(inning, 9);
